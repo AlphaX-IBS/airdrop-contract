@@ -9,7 +9,7 @@ contract Owner {
         _;
     }
 
-    constructor(address _owner) public {
+    function Owner(address _owner) public {
         owner = _owner;
     }
 
@@ -173,7 +173,7 @@ contract GreenX is Owner {
         _;
     }
 
-    constructor(address _walletAddr, address _adminAddr, address _portalAddr) public Owner(msg.sender) {
+    function GreenX(address _walletAddr, address _adminAddr, address _portalAddr) public Owner(msg.sender) {
         require(_walletAddr != address(0));
         require(_adminAddr != address(0));
         require(_portalAddr != address(0));

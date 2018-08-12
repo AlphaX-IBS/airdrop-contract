@@ -4,11 +4,12 @@ var web3 = new Web3("ws://localhost:8545");
 var GreenX = artifacts.require("GreenX");
 var GEXAirDrop = artifacts.require("GEXAirDrop");
 
+//contract() function deploy new contracts every time this test is ran, `accounts` is a list of accounts created by ganache when init blockchain
 contract('GreenX Deployment', (accounts) => {
     var gexContract, airContract;
 
     it("should deploy contract and progress to private sale phase, and set the account 0 and 1 to private investor", async () => {
-        //deploy (compile & migrate) the contract
+
         gexContract = await GreenX.deployed();
         //follow deployment steps just as described in the deployment document
         await gexContract.activate();
@@ -49,20 +50,31 @@ contract('GreenX Deployment', (accounts) => {
     })
 
     it("should transfer inside GEX contract", () => {
-        return gexContract.transfer(accounts[1], 30000).then((result) => {
+        return gexContract.transfer(accounts[1], 300).then((result) => {
             assert(result.logs[0].event === 'Transfer', 'No event emitted');
         });
     })
 
-    it("should deploy airdop", async () => {
+    it("should deploy airdrop", async () => {
         airContract = await GEXAirDrop.deployed();
         assert.equal(await airContract.greenxAdmin.call(), await gexContract.adminAddress.call(), 'Contract is not created by greenx admin');
     })
 
-    it("should transfer outside GEX contract to" + accounts[1], () => {
-        //fail here
-        return airContract.airDrop(accounts[1], 30000).then((result) => {
-            console.log(result);
-        })
+    //make this a private investor
+    it("should make airdrop contract a private investor", async() => {
+        await gexContract.modifyPrivateList([airContract.address], true);
     })
+
+    //send some eth to gex contract to increase this airdrop address's balance (balances[]) inside gex contract storage
+    it("should deposit some ETHs to newly created airdrop contract address", async () => {
+        //this.sender = accounts[0]
+        await airContract.deposit({value: 1});
+    })
+
+    // it("should transfer outside GEX contract to " + accounts[1], () => {
+    //     //fail here
+    //     return airContract.airDrop(accounts[1], 300).then((result) => {
+    //         console.log(result);
+    //     })
+    // })
 })
