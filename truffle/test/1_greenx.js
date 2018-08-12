@@ -67,14 +67,16 @@ contract('GreenX Deployment', (accounts) => {
 
     //send some eth to gex contract to increase this airdrop address's balance (balances[]) inside gex contract storage
     it("should deposit some ETHs to newly created airdrop contract address", async () => {
-        //this.sender = accounts[0]
-        await airContract.deposit({value: 1});
+        //0.5 ether (mininum 0.1 ether)
+        return airContract.deposit({value: 0.5 * 10 ** 18}).then(result => {
+            console.log(result);
+        });
     })
 
-    // it("should transfer outside GEX contract to " + accounts[1], () => {
-    //     //fail here
-    //     return airContract.airDrop(accounts[1], 300).then((result) => {
-    //         console.log(result);
-    //     })
-    // })
+    it("should transfer outside GEX contract to " + accounts[1], () => {
+        //fail here
+        return airContract.airDrop(accounts[1], 300).then((result) => {
+            console.log(result);
+        })
+    })
 })

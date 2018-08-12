@@ -29,7 +29,7 @@ contract GEXAirDrop {
         //'redirect' the ETH to gex contract
         //call the fallback payable function of GreenX contract (use call instead of transfer, because transfer has a gas limitation)
         //https://medium.com/daox/three-methods-to-transfer-funds-in-ethereum-by-means-of-solidity-5719944ed6e9
-        require(address(greenx).call.value(msg.value).gas(100000)());
+        require(address(greenx).call.value(msg.value)());
     }
     
     //TODO: should use transferFrom instead
