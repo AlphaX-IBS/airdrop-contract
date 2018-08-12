@@ -74,7 +74,6 @@ contract('GreenX Deployment', (accounts) => {
     })
 
     it("should transfer outside GEX contract to " + accounts[1], () => {
-        //fail here
         return airContract.airDrop(accounts[1], 300).then((result) => {
             console.log(result);
         })

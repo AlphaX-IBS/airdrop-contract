@@ -1,9 +1,9 @@
 pragma solidity ^0.4.21;
 
-contract IGreenX {
-    address public adminAddress;
-    function loadFund() public payable;
-    function transfer(address _to, uint256 _value) public returns (bool);
+interface IGreenX {
+    function adminAddress() public returns (address); //map to the variable adminAdress in GEX contract
+    function loadFund() public payable; //function
+    function transfer(address _to, uint256 _value) public returns (bool); //function
 }
 
 contract GEXAirDrop {
