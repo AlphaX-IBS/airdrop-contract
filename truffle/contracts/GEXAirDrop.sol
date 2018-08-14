@@ -32,15 +32,12 @@ contract GEXAirDrop {
         require(address(greenx).call.value(msg.value)());
     }
     
-    //TODO: should use transferFrom instead
     function airDrop(address _to, uint256 _amount) public onlyAdmin {
         //the transfer function reduce the balance of msg.sender(in this case - the airdrop contract address)
         //so we must first call deposit to deposit some balance into GEX contract (balances[airdropAddress])
         require(greenx.transfer(_to, _amount));
-
     }
 
-    //TODO: should use transferFrom instead
     function batchAirDrop(address[] _to, uint256[] _amount) public onlyAdmin {
         uint count = _to.length;
         for(uint i = 0; i < count; i++){

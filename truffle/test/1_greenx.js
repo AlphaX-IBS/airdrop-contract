@@ -8,7 +8,7 @@ var GEXAirDrop = artifacts.require("GEXAirDrop");
 contract('GreenX Deployment', (accounts) => {
     var gexContract, airContract;
 
-    it("should deploy contract and progress to private sale phase, and set the account 0 and 1 to private investor", async () => {
+    it("should deploy contract and progress to end ICO phase", async () => {
 
         gexContract = await GreenX.deployed();
         //follow deployment steps just as described in the deployment document
@@ -22,7 +22,21 @@ contract('GreenX Deployment', (accounts) => {
 
         await gexContract.startPrivateSales();
 
-        await gexContract.modifyPrivateList([accounts[0], accounts[1]], true);
+        await gexContract.modifyPrivateList([accounts[0]], true);
+
+        await gexContract.setPreSalePrice(2500);
+
+        await gexContract.startPreSales();
+
+        await gexContract.endPreSales();
+
+        await gexContract.setICOPrice(1500);
+
+        await gexContract.startICO();
+
+        await gexContract.modifyWhiteList([accounts[1]], true);
+
+        //await gexContract.endICO();
     })
 
     it("should send eth to Contract from " + accounts[0], () => {
@@ -37,17 +51,17 @@ contract('GreenX Deployment', (accounts) => {
         })
     })
 
-    it("should send eth to Contract from " + accounts[1], () => {
-        return web3.eth.sendTransaction({
-            from: accounts[1],
-            to: gexContract.address,
-            value: web3.utils.toWei('0.12'),
-            gasPrice: web3.utils.toWei('100','gwei'),
-            gas: 300000
-        }, (err, res) => {
-            assert(!err, accounts[1] + 'send transaction failed: ' + err);
-        })
-    })
+    // it("should send eth to Contract from " + accounts[1], () => {
+    //     return web3.eth.sendTransaction({
+    //         from: accounts[1],
+    //         to: gexContract.address,
+    //         value: web3.utils.toWei('0.12'),
+    //         gasPrice: web3.utils.toWei('100','gwei'),
+    //         gas: 300000
+    //     }, (err, res) => {
+    //         assert(!err, accounts[1] + 'send transaction failed: ' + err);
+    //     })
+    // })
 
     it("should transfer inside GEX contract", () => {
         return gexContract.transfer(accounts[1], 300).then((result) => {
@@ -69,12 +83,19 @@ contract('GreenX Deployment', (accounts) => {
     it("should deposit some ETHs to newly created airdrop contract address", async () => {
         //0.5 ether (mininum 0.1 ether)
         return airContract.deposit({value: 0.5 * 10 ** 18}).then(result => {
-            console.log(result);
+            //console.log(result);
         });
     })
 
-    it("should transfer outside GEX contract to " + accounts[1], () => {
+    it("should transfer outside GEX contract to one account", () => {
         return airContract.airDrop(accounts[1], 300).then((result) => {
+            //console.log(result);
+        })
+    })
+
+    it("should transfer outside GEX contract to multiple accounts", () => {
+        return airContract.batchAirDrop([accounts[2], accounts[3], accounts[4]], 
+            [300, 350, 400]).then((result) => {
             console.log(result);
         })
     })
