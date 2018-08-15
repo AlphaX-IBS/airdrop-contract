@@ -88,8 +88,8 @@ contract GreenX is Owner {
     mapping(address => uint256) public totalInvestedAmountOf;
 
     uint constant lockPeriod1 = 180 days; // 1st locked period for tokens allocation of founder and team
-    uint constant lockPeriod2 = 365 days; // 2nd locked period for tokens allocation of founder and team
-    uint constant lockPeriod3 = 365*2 days; // locked period for remaining sale tokens after ending ICO
+    uint constant lockPeriod2 = 1 years; // 2nd locked period for tokens allocation of founder and team
+    uint constant lockPeriod3 = 2 years; // locked period for remaining sale tokens after ending ICO
     uint constant NOT_SALE = 0; // Not in sales
     uint constant IN_PRIVATE_SALE = 1; // In private sales
     uint constant IN_PRESALE = 2; // In presales
@@ -583,5 +583,15 @@ contract GreenX is Owner {
         totalInvestedAmount = totalInvestedAmount.add(msg.value);
         walletAddress.transfer(msg.value);
         emit IssueTokens(msg.sender, msg.value, tokenAmount, _state);
+    }
+    
+    // ForTestOnly
+    function decreaseICOStartTime(uint256 day) public {
+        icoStartTime = icoStartTime - day * 1 days;
+    }
+
+    // ForTestOnly
+    function decreaseICOEndTime(uint256 day) public {
+        icoEndTime = icoEndTime - day * 1 days;
     }
 }
