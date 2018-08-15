@@ -2,6 +2,7 @@ pragma solidity ^0.4.21;
 
 contract IGEX {
     address public adminAddress;
+    address public owner;
     function transfer(address _to, uint256 _value) public returns (bool);
     function allocateReservedTokens(address _addr, uint _amount) external;
 }
@@ -9,22 +10,20 @@ contract IGEX {
 contract GexAlloc {
     IGEX public gex;
     address public gexAdmin;
-    
-    modifier onlyAdmin() {
-        require(msg.sender == gexAdmin);
+    address public gexOwner;
+
+    modifier onlyGexAdminOrOwner() {
+        require(msg.sender == gexAdmin || msg.sender == gexOwner);
         _;
     }
     
-    //constructor - take GEX contract address as param
     function GexAlloc (address _contractAddress) public {
-        //get the current GreenX contract instance by passing address
         gex = IGEX(_contractAddress);
-        //get the owner, admin address
         gexAdmin = gex.adminAddress();
+        gexOwner = gex.owner();
     }
     
-    function batchReservedTokenAlloc(address[] _toAddress, uint[] _tokenAmount) external onlyAdmin {
-        // allocateReservedTokens
+    function batchReservedTokenAlloc(address[] _toAddress, uint[] _tokenAmount) external onlyGexAdminOrOwner {
         uint count = _toAddress.length;
         
         for (uint i = 0; i < count; i++) {
@@ -32,7 +31,7 @@ contract GexAlloc {
         }
     }
     
-    function batchTokenTransfer(address[] _to, uint256[] _amount) external onlyAdmin {
+    function batchTokenTransfer(address[] _to, uint256[] _amount) external onlyGexAdminOrOwner {
         uint count = _to.length;
         
         for (uint i = 0; i < count; i++) {
@@ -41,7 +40,7 @@ contract GexAlloc {
         
     }
     
-    function tokenTransfer(address _to, uint256 _amount) external onlyAdmin {
+    function tokenTransfer(address _to, uint256 _amount) external onlyGexAdminOrOwner {
         require(gex.transfer(_to, _amount));
     }
 }
